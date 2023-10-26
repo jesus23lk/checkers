@@ -54,7 +54,6 @@ function createBoard() {
       if((j + i) % 2 === 0) {
         
         const creamSquare = document.createElement('div');
-  
         creamSquare.className = 'cream-square';
         creamSquare.id = 'loc-' + i + j;            //Note here that 'i + j' is doing string addition which is concatenation
   
@@ -66,7 +65,6 @@ function createBoard() {
       
       else  {
         const brownSquare = document.createElement('div');
-        
         brownSquare.className = 'brown-square';
         brownSquare.id = 'loc-' + i + j;
         
@@ -78,7 +76,6 @@ function createBoard() {
         if(i < 3) {
   
           const blackPiece = document.createElement('div');
-          
           blackPiece.className = 'black-piece';
           blackPiece.id = 'piece-' + pieceId;
 
@@ -95,7 +92,6 @@ function createBoard() {
         else if (i > 4) {
           
           const whitePiece = document.createElement('div');
-
           whitePiece.className = 'white-piece';
           whitePiece.id = 'piece-' + pieceId;
 
@@ -117,33 +113,8 @@ function createBoard() {
   }
 }
 
-function changePlayerTurn() {
-
-  if(game.player1Turn) {
-
-    game.movesVisible = false;
-    game.player1Turn = false;
-    game.player2Turn = true;
-
-    document.getElementById('player-turn').innerHTML = 'Player 2 Turn';
-    document.getElementById('header-div').style.backgroundColor = 'rgb(38, 38, 202)';
-    
-  }
-
-  else if (game.player2Turn) {
-
-    game.movesVisible = false;
-    game.player1Turn = true;
-    game.player2Turn = false;
-
-    document.getElementById('player-turn').innerHTML = 'Player 1 Turn';
-    document.getElementById('header-div').style.backgroundColor = 'rgb(218, 21, 21)';
-
-  }
-}
-
 function showMoves() {
-
+  
   /*This function is where all the magic happens*/
   
   /*The conditional below contains the two conditions under which the function body will not be executed*/
@@ -154,12 +125,6 @@ function showMoves() {
 
   /*The condition on the right side of the ||, '!this.children[0]' checks if the square that the player clicked on even has 
     a piece on it. If it doesn't then the function is exited*/
-
-  game.i++;
-
-  console.log('This is click number ' + game.i);
-
-  console.log('moves Visible is ' + game.movesVisible);
 
   if(!this.children[0]) return;
 
@@ -173,8 +138,6 @@ function showMoves() {
 
   }
 
-  game.curPos = this;
-
   const piece = this.children[0];   //'piece' corresponds to the game piece that lies on the square that was clicked
 
   rowNum = Number(this.id[4]);
@@ -183,14 +146,14 @@ function showMoves() {
   let leftPos = assignLeftPos(rowNum, colNum, piece);
   let rightPos = assignRightPos(rowNum, colNum, piece);
 
-  saveLRpositons(leftPos, rightPos);
+  saveCurPositons(leftPos, rightPos, this);
 
   playAnimation(leftPos, rightPos, piece);
 
   cancelMove(leftPos, rightPos, this);
 
   showLeftPos(leftPos, rightPos, piece);
-
+  
   showRightPos(leftPos, rightPos, piece);
 
   this.removeEventListener('click', showMoves);
@@ -239,33 +202,7 @@ function showLeftPos(leftPos, rightPos, piece) {
 
   leftPos.addEventListener('click', showLeft1 = () => {
 
-    if(game.player1Turn) {
-
-      piece.style.translate = '-70px -70px';
-      
-    }
-
-    else {
-
-      console.log('entered');
-
-      piece.style.translate = '-70px 70px';
-
-    }
-
-    piece.style.transition = '.4s';
-    
-    piece.addEventListener('transitionend', () =>{
-
-
-      leftPos.appendChild(piece);
-
-      piece.style.translate = '0px 0px';
-
-    });
-
-    /*Below we are turning the square color back to brown*/
-
+    moveLeft(piece, leftPos);
     
     if(rightPos) rightPos.removeEventListener('click', showRight1);
     leftPos.removeEventListener('click', showLeft1);
@@ -283,30 +220,7 @@ function showRightPos(leftPos, rightPos, piece) {
   
   rightPos.addEventListener('click', showRight1 = function() {
 
-    if(game.player1Turn) {
-
-      piece.style.translate = '70px -70px';
-      
-    }
-    
-    else {
-
-      piece.style.translate = '70px 70px';
-
-    }
-
-    piece.style.transition = '.4s';
-
-    piece.addEventListener('transitionend', () =>{
-
-      rightPos.appendChild(piece);
-
-      piece.style.translate = 'none';
-      piece.style.transition = 'none';
-
-    });
-
-    /*Below we are turning the square color back to brown*/
+    moveRight(piece, rightPos);
 
     if(leftPos) leftPos.removeEventListener('click', showLeft1);
     rightPos.removeEventListener('click', showRight1);
@@ -350,10 +264,11 @@ function assignRightPos(rowNum, colNum, piece) {
 
 }
 
-function saveLRpositons(leftPos, rightPos) {
+function saveCurPositons(leftPos, rightPos, curPos) {
 
   if(leftPos) game.leftVisible = leftPos;
   if(rightPos) game.rightVisible = rightPos;
+  game.curPos = curPos;
 }
 
 function playAnimation(leftPos, rightPos, piece) {
@@ -373,4 +288,74 @@ function stopAnimation(leftPos, rightPos, piece) {
 
   if(leftPos) leftPos.style.backgroundColor = 'rgb(135, 93, 55)';
   if (rightPos) rightPos.style.backgroundColor = 'rgb(135, 93, 55)';
+}
+
+function  changePlayerTurn() {
+
+  if(game.player1Turn) {
+
+    game.movesVisible = false;
+    game.player1Turn = false;
+    game.player2Turn = true;
+
+    document.getElementById('player-turn').innerHTML = 'Player 2 Turn';
+    document.getElementById('header-div').style.backgroundColor = 'rgb(38, 38, 202)';
+    
+  }
+
+  else if (game.player2Turn) {
+
+    game.movesVisible = false;
+    game.player1Turn = true;
+    game.player2Turn = false;
+
+    document.getElementById('player-turn').innerHTML = 'Player 1 Turn';
+    document.getElementById('header-div').style.backgroundColor = 'rgb(218, 21, 21)';
+
+  }
+}
+
+function moveLeft(piece, newPos) {
+
+  if(game.player1Turn) piece.style.translate = '-70px -70px';
+
+  else piece.style.translate = '-70px 70px';
+
+  piece.style.transition = '.4s';
+  
+  piece.addEventListener('transitionend', () =>{
+
+    newPos.appendChild(piece);
+
+    piece.style.translate = '0px 0px';
+
+  });
+
+}
+
+function moveRight(piece, newPos) {
+
+  if(game.player1Turn) {
+
+    piece.style.translate = '70px -70px';
+    
+  }
+  
+  else {
+
+    piece.style.translate = '70px 70px';
+
+  }
+
+  piece.style.transition = '.4s';
+
+  piece.addEventListener('transitionend', () =>{
+
+    newPos.appendChild(piece);
+
+    piece.style.translate = 'none';
+    piece.style.transition = 'none';
+
+  });
+
 }
