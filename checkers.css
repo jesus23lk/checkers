@@ -54,6 +54,13 @@
   border: solid;
   border-radius: 50%;
   border-width: 7px;
+  animation-name: piece-animation;
+  animation-duration: 1s;
+  animation-direction: alternate;
+  animation-timing-function: ease-out;
+  animation-play-state: running;
+  animation-iteration-count: 0; 
+  cursor: pointer;
 }
 
 .black-piece {
@@ -64,6 +71,25 @@
   background-color: white;
   border-color: rgb(213, 204, 189);
 }
+
+@keyframes piece-animation {
+
+  0% { 
+    width: 72%;
+    height: 72%;
+  }
+
+  50% { 
+    width: 75%;
+    height: 75%;
+  }
+
+  100% { 
+    width: 72%;
+    height: 72%;
+  }
+}
+
 
 /* .mov-pos {
   height: 100%;

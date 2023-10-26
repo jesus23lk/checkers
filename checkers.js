@@ -175,106 +175,25 @@ function showMoves() {
 
   game.curPos = this;
 
-
   const piece = this.children[0];   //'piece' corresponds to the game piece that lies on the square that was clicked
 
   rowNum = Number(this.id[4]);
-
   colNum = Number(this.id[5]);
 
-  /*Conditional below deals only with moving WHITE pieces and will not be entered if it is
-    player 2's turn*/
+  let leftPos = assignLeftPos(rowNum, colNum, piece);
+  let rightPos = assignRightPos(rowNum, colNum, piece);
 
-    let leftPos;
-    let rightPos;
+  saveLRpositons(leftPos, rightPos);
 
-  if(game.player1Turn && piece.className === 'white-piece') {
-    
-    leftPos = document.getElementById('loc-' + (rowNum - 1) + (colNum - 1));
-    rightPos = document.getElementById('loc-' + (rowNum - 1) + (colNum + 1));
+  playAnimation(leftPos, rightPos, piece);
 
-  }
+  cancelMove(leftPos, rightPos, this);
 
-  else if (game.player2Turn && piece.className === 'black-piece') {
+  showLeftPos(leftPos, rightPos, piece);
 
-    leftPos = document.getElementById('loc-' + (rowNum + 1) + (colNum - 1));
-    rightPos = document.getElementById('loc-' + (rowNum + 1) + (colNum + 1));
+  showRightPos(leftPos, rightPos, piece);
 
-  }
-
-  else return;
-
-
-  /*The if statement below is entered when we click on a white pice that lies along
-    the left edge of the board*/
-
-  if(!leftPos && !rightPos.children[0]) {
-
-    console.log('correct loop entered');
-
-    rightPos.style.backgroundColor = 'green';
-
-    game.movesVisible = true;
-
-    cancelMove(leftPos, rightPos, this);
-
-    showRightPos(leftPos, rightPos, piece);
-  }
-
-  /*The conditional below is entered when we click on a white piece that lies along 
-    the right edge of the board*/
-
-  else if(!rightPos && !leftPos.children[0]) {
-
-    leftPos.style.backgroundColor = 'green';
-
-    game.movesVisible = true;
-
-    cancelMove(leftPos, rightPos, this);
-
-    showLeftPos(leftPos, rightPos, piece);
-  }
-
-  else if(!leftPos.children[0] && !rightPos.children[0]) {
-
-    leftPos.style.backgroundColor = 'green';
-    rightPos.style.backgroundColor = 'green';
-
-    game.movesVisible = true;
-
-    cancelMove(leftPos, rightPos, this);
-
-    showLeftPos(leftPos, rightPos, piece);
-
-    showRightPos(leftPos, rightPos, piece);
-
-    this.removeEventListener('click', showMoves);
-
-  }
-
-  else if(!leftPos.children[0]) {
-
-    leftPos.style.backgroundColor = 'green';
-
-    game.movesVisible = true;
-
-    cancelMove(leftPos, rightPos, this);
-
-    showLeftPos(leftPos, rightPos, piece);
-
-  }
-
-  else if(!rightPos.children[0]) {
-
-    rightPos.style.backgroundColor = 'green';
-
-    game.movesVisible = true;
-
-    cancelMove(leftPos, rightPos, this);
-
-    showRightPos(leftPos, rightPos, piece);
-
-  }
+  this.removeEventListener('click', showMoves);
 
 }
 
@@ -297,12 +216,8 @@ function cancelMove(leftPos, rightPos, curPos) {
 
   curPos.addEventListener('click', hideMoves = () => {
 
-    console.log(curPos);
-    
     if(rightPos) rightPos.removeEventListener('click', showRight1);
     if(leftPos) leftPos.removeEventListener('click', showLeft1);
-
-    console.log('cancel EL entered');
 
     if(leftPos) leftPos.style.backgroundColor = 'rgb(135, 93, 55)';
     if(rightPos) rightPos.style.backgroundColor = 'rgb(135, 93, 55)';
@@ -320,8 +235,7 @@ function cancelMove(leftPos, rightPos, curPos) {
 
 function showLeftPos(leftPos, rightPos, piece) {
 
-  game.leftVisible = leftPos;
-  game.rightVisible = rightPos;
+  if(!leftPos) return;
 
   leftPos.addEventListener('click', showLeft1 = () => {
 
@@ -352,13 +266,11 @@ function showLeftPos(leftPos, rightPos, piece) {
 
     /*Below we are turning the square color back to brown*/
 
-    if(rightPos) rightPos.style.backgroundColor = 'rgb(135, 93, 55)';
-    leftPos.style.backgroundColor = 'rgb(135, 93, 55)';
-
     
     if(rightPos) rightPos.removeEventListener('click', showRight1);
     leftPos.removeEventListener('click', showLeft1);
     
+    stopAnimation(leftPos, rightPos, piece);
     changePlayerTurn();
     
   });
@@ -367,8 +279,7 @@ function showLeftPos(leftPos, rightPos, piece) {
 
 function showRightPos(leftPos, rightPos, piece) {
 
-  game.leftVisible = leftPos;
-  game.rightVisible = rightPos;
+  if(!rightPos) return;
   
   rightPos.addEventListener('click', showRight1 = function() {
 
@@ -397,14 +308,69 @@ function showRightPos(leftPos, rightPos, piece) {
 
     /*Below we are turning the square color back to brown*/
 
-    if(leftPos) leftPos.style.backgroundColor = 'rgb(135, 93, 55)';
-    rightPos.style.backgroundColor = 'rgb(135, 93, 55)';
-
-    
     if(leftPos) leftPos.removeEventListener('click', showLeft1);
     rightPos.removeEventListener('click', showRight1);
     
-    
+    stopAnimation(leftPos,rightPos,piece);
     changePlayerTurn();
+
   });
+}
+
+function assignLeftPos(rowNum, colNum, piece) {
+  
+  if(game.player1Turn && piece.className === 'white-piece') {
+     
+    return document.getElementById('loc-' + (rowNum - 1) + (colNum - 1));
+
+  }
+
+
+  else if (game.player2Turn && piece.className === 'black-piece') {
+
+    return document.getElementById('loc-' + (rowNum + 1) + (colNum - 1));
+
+  }
+
+}
+
+function assignRightPos(rowNum, colNum, piece) {
+
+  if(game.player1Turn && piece.className === 'white-piece') {
+    
+    return document.getElementById('loc-' + (rowNum - 1) + (colNum + 1));
+
+  }
+
+  else if (game.player2Turn && piece.className === 'black-piece') {
+
+    return document.getElementById('loc-' + (rowNum + 1) + (colNum + 1));
+
+  }
+
+}
+
+function saveLRpositons(leftPos, rightPos) {
+
+  if(leftPos) game.leftVisible = leftPos;
+  if(rightPos) game.rightVisible = rightPos;
+}
+
+function playAnimation(leftPos, rightPos, piece) {
+
+  console.log('playAnimation entered');
+  console.log(leftPos);
+  console.log(rightPos);
+
+  if(leftPos && !leftPos.children[0]) leftPos.style.backgroundColor = 'green';
+  if(rightPos && !rightPos.children[0])  rightPos.style.backgroundColor = 'green';
+
+  game.movesVisible = true;
+
+}
+
+function stopAnimation(leftPos, rightPos, piece) {
+
+  if(leftPos) leftPos.style.backgroundColor = 'rgb(135, 93, 55)';
+  if (rightPos) rightPos.style.backgroundColor = 'rgb(135, 93, 55)';
 }
