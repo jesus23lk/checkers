@@ -41,6 +41,7 @@
 .brown-square {
   cursor: pointer;
   background-color: rgb(135, 93, 55);
+  /* background-color: rgb(190, 6, 6); */
 }
 
 .cream-square {
@@ -91,9 +92,18 @@
 }
 
 
-/* .mov-pos {
-  height: 100%;
-  width: 100%;
-  background-color: rgb(132, 232, 132);
-  opacity: 70%;
-} */
+.black-mov-pos, .white-mov-pos {
+  height: 45%;
+  width: 45%;
+  opacity: 50%;
+  margin: auto;
+  border-radius: 50%;
+}
+
+.black-mov-pos {
+  background-color: black;
+}
+
+.white-mov-pos {
+  background-color: white;
+}

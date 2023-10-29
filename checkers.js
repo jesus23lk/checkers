@@ -148,87 +148,16 @@ function showMoves() {
 
   saveCurPositons(leftPos, rightPos, this);
 
-  playAnimation(leftPos, rightPos, piece);
+  playAnimation(leftPos, rightPos, this, piece);
 
   cancelMove(leftPos, rightPos, this);
 
-  showLeftPos(leftPos, rightPos, piece);
+  showLeftPos(leftPos, rightPos, this, piece);
   
-  showRightPos(leftPos, rightPos, piece);
+  showRightPos(leftPos, rightPos, this, piece);
 
-  this.removeEventListener('click', showMoves);
+  // this.removeEventListener('click', showMoves);
 
-}
-
-function changeMove(leftPos, rightPos, curPos) {
-
-  if(rightPos) rightPos.removeEventListener('click', showRight1);
-  if(leftPos) leftPos.removeEventListener('click', showLeft1);
-
-  if(leftPos) leftPos.style.backgroundColor = 'rgb(135, 93, 55)';
-  if(rightPos) rightPos.style.backgroundColor = 'rgb(135, 93, 55)';
-
-  game.movesVisible = true;
-
-  curPos.removeEventListener('click', hideMoves);
-  curPos.addEventListener('click', showMoves);
-
-}
-
-function cancelMove(leftPos, rightPos, curPos) {
-
-  curPos.addEventListener('click', hideMoves = () => {
-
-    if(rightPos) rightPos.removeEventListener('click', showRight1);
-    if(leftPos) leftPos.removeEventListener('click', showLeft1);
-
-    if(leftPos) leftPos.style.backgroundColor = 'rgb(135, 93, 55)';
-    if(rightPos) rightPos.style.backgroundColor = 'rgb(135, 93, 55)';
-
-    
-    game.movesVisible = false;
-    curPos.addEventListener('click', showMoves);
-    
-    curPos.removeEventListener('click', hideMoves);
-
-  });    
-
-
-}
-
-function showLeftPos(leftPos, rightPos, piece) {
-
-  if(!leftPos) return;
-
-  leftPos.addEventListener('click', showLeft1 = () => {
-
-    moveLeft(piece, leftPos);
-    
-    if(rightPos) rightPos.removeEventListener('click', showRight1);
-    leftPos.removeEventListener('click', showLeft1);
-    
-    stopAnimation(leftPos, rightPos, piece);
-    changePlayerTurn();
-    
-  });
-
-}
-
-function showRightPos(leftPos, rightPos, piece) {
-
-  if(!rightPos) return;
-  
-  rightPos.addEventListener('click', showRight1 = function() {
-
-    moveRight(piece, rightPos);
-
-    if(leftPos) leftPos.removeEventListener('click', showLeft1);
-    rightPos.removeEventListener('click', showRight1);
-    
-    stopAnimation(leftPos,rightPos,piece);
-    changePlayerTurn();
-
-  });
 }
 
 function assignLeftPos(rowNum, colNum, piece) {
@@ -264,6 +193,69 @@ function assignRightPos(rowNum, colNum, piece) {
 
 }
 
+function changeMove(leftPos, rightPos, curPos) {
+
+  if(rightPos) rightPos.removeEventListener('click', showRight1);
+  if(leftPos) leftPos.removeEventListener('click', showLeft1);
+
+  stopAnimation(leftPos, rightPos, curPos);
+
+  game.movesVisible = true;
+
+  curPos.removeEventListener('click', hideMoves);
+  curPos.addEventListener('click', showMoves);
+
+}
+
+function cancelMove(leftPos, rightPos, curPos) {
+
+  curPos.addEventListener('click', hideMoves = () => {
+
+    stopAnimation(leftPos, rightPos, curPos);
+    
+    game.movesVisible = false;
+
+    removeListeners(leftPos, rightPos, curPos);
+
+  });    
+
+
+}
+
+function showLeftPos(leftPos, rightPos, curPos, piece) {
+
+  if(!leftPos || leftPos.children[0]) return;
+
+  leftPos.addEventListener('click', showLeft1 = () => {
+
+    moveLeft(piece, leftPos);
+
+    removeListeners(leftPos, rightPos, curPos);
+    
+    stopAnimation(leftPos, rightPos, curPos);
+
+    changePlayerTurn();
+    
+  });
+}
+
+function showRightPos(leftPos, rightPos, curPos, piece) {
+
+  if(!rightPos || rightPos.children[0]) return;
+  
+  rightPos.addEventListener('click', showRight1 = function() {
+
+    moveRight(piece, rightPos);
+
+    removeListeners(leftPos, rightPos, curPos);
+
+    stopAnimation(leftPos, rightPos, curPos);
+
+    changePlayerTurn();
+
+  });
+}
+
 function saveCurPositons(leftPos, rightPos, curPos) {
 
   if(leftPos) game.leftVisible = leftPos;
@@ -271,12 +263,13 @@ function saveCurPositons(leftPos, rightPos, curPos) {
   game.curPos = curPos;
 }
 
-function playAnimation(leftPos, rightPos, piece) {
+function playAnimation(leftPos, rightPos, curPos, piece) {
 
   console.log('playAnimation entered');
   console.log(leftPos);
   console.log(rightPos);
 
+  curPos.style.backgroundColor = 'rgb(190, 6, 6)';
   if(leftPos && !leftPos.children[0]) leftPos.style.backgroundColor = 'green';
   if(rightPos && !rightPos.children[0])  rightPos.style.backgroundColor = 'green';
 
@@ -284,13 +277,21 @@ function playAnimation(leftPos, rightPos, piece) {
 
 }
 
-function stopAnimation(leftPos, rightPos, piece) {
+function stopAnimation(leftPos, rightPos, curPos) {
 
   if(leftPos) leftPos.style.backgroundColor = 'rgb(135, 93, 55)';
   if (rightPos) rightPos.style.backgroundColor = 'rgb(135, 93, 55)';
+  curPos.style.backgroundColor = 'rgb(135, 93, 55)';
 }
 
-function  changePlayerTurn() {
+function removeListeners(leftPos, rightPos, curPos) {
+
+  if(leftPos) leftPos.removeEventListener('click', showLeft1);
+  if(rightPos) rightPos.removeEventListener('click', showRight1);
+  curPos.removeEventListener('click', hideMoves);
+}
+
+function changePlayerTurn() {
 
   if(game.player1Turn) {
 
