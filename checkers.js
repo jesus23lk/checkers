@@ -265,22 +265,34 @@ function saveCurPositons(leftPos, rightPos, curPos) {
 
 function playAnimation(leftPos, rightPos, curPos, piece) {
 
-  console.log('playAnimation entered');
-  console.log(leftPos);
-  console.log(rightPos);
-
+  
+  if(leftPos && !leftPos.children[0]) {
+    leftPos.style.backgroundColor = 'green';
+    leftPos.style.animationIterationCount = 'infinite';
+  } 
+  
+  if(rightPos && !rightPos.children[0]) {
+    rightPos.style.backgroundColor = 'green';
+    rightPos.style.animationIterationCount = 'infinite';
+  }
+  
   curPos.style.backgroundColor = 'rgb(190, 6, 6)';
-  if(leftPos && !leftPos.children[0]) leftPos.style.backgroundColor = 'green';
-  if(rightPos && !rightPos.children[0])  rightPos.style.backgroundColor = 'green';
-
   game.movesVisible = true;
 
 }
 
 function stopAnimation(leftPos, rightPos, curPos) {
 
-  if(leftPos) leftPos.style.backgroundColor = 'rgb(135, 93, 55)';
-  if (rightPos) rightPos.style.backgroundColor = 'rgb(135, 93, 55)';
+  if(leftPos) {
+    leftPos.style.backgroundColor = 'rgb(135, 93, 55)';
+    leftPos.style.animationIterationCount = '0';
+  }
+  
+  if (rightPos) {
+    rightPos.style.backgroundColor = 'rgb(135, 93, 55)';
+    rightPos.style.animationIterationCount = '0';
+  }  
+
   curPos.style.backgroundColor = 'rgb(135, 93, 55)';
 }
 

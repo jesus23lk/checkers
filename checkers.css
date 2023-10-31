@@ -36,12 +36,17 @@
   width: 100%;
   margin: auto;
   display: grid;
+  animation-name: square-animation;
+  animation-duration: .8s;
+  animation-direction: alternate;
+  animation-timing-function: ease-out;
+  animation-play-state: running;
+  animation-iteration-count: 0; 
 }
 
 .brown-square {
   cursor: pointer;
   background-color: rgb(135, 93, 55);
-  /* background-color: rgb(190, 6, 6); */
 }
 
 .cream-square {
@@ -56,7 +61,7 @@
   border-radius: 50%;
   border-width: 7px;
   animation-name: piece-animation;
-  animation-duration: 1s;
+  animation-duration: .5s;
   animation-direction: alternate;
   animation-timing-function: ease-out;
   animation-play-state: running;
@@ -73,21 +78,18 @@
   border-color: rgb(213, 204, 189);
 }
 
-@keyframes piece-animation {
+@keyframes square-animation {
 
   0% { 
-    width: 72%;
-    height: 72%;
+    opacity: 100%;
   }
 
-  50% { 
-    width: 75%;
-    height: 75%;
+  50% {
+    opacity: 85%;
   }
 
   100% { 
-    width: 72%;
-    height: 72%;
+    opacity: 100%;
   }
 }
 
