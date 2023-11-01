@@ -1,0 +1,67 @@
+
+#board {
+  height: 400px;
+  width: 400px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  background-color: rgb(236, 213, 164);
+  /* animation-name: example;
+  animation-duration: 1.5s;
+  animation-iteration-count: 1; */
+}
+
+div div {
+  display: grid;
+}
+
+#top-left, #bot-right {
+  background-color: rgb(145, 85, 33);
+  animation-name: squares;
+  animation-duration: 1s;
+  animation-direction: alternate;
+  animation-timing-function: ease-out;
+  animation-play-state: running;
+}
+
+#piece {
+  width: 70%;
+  height: 70%;
+  border-radius: 50%;
+  background-color: rgb(0, 0, 0);
+  margin: auto;
+  animation-name: example;
+  animation-duration: 1s;
+  animation-direction: alternate;
+  animation-timing-function: ease-out;
+  animation-play-state: running;
+
+  animation-iteration-count: 0; 
+  cursor: pointer;
+}
+
+@keyframes example {
+
+  0% { 
+    width: 70%;
+    height: 70%;
+  }
+
+  50% { 
+    width: 75%;
+    height: 75%;
+  }
+
+  100% { 
+    width: 70%;
+    height: 70%;
+  }
+}
+
+@keyframes squares {
+  0%  {background-color: rgb(6, 90, 16)}
+  50% {background-color: green;}
+  100%  {background-color: rgb(6, 90, 16)}
+}
+

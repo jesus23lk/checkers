@@ -162,16 +162,40 @@ function showMoves() {
 
 function assignLeftPos(rowNum, colNum, piece) {
   
-  if(game.player1Turn && piece.className === 'white-piece') {
+  if(game.player1Turn && isWhite(piece)) {
      
-    return document.getElementById('loc-' + (rowNum - 1) + (colNum - 1));
+    let leftPos = document.getElementById('loc-' + (rowNum - 1) + (colNum - 1));
+
+    if(!leftPos) return leftPos;
+
+    let leftChild = leftPos.firstChild;
+
+    if(isBlack(leftChild)) {
+      
+      leftPos = document.getElementById('loc-' + (rowNum - 2) + (colNum - 2) );
+
+    }
+
+    return leftPos;
 
   }
 
 
-  else if (game.player2Turn && piece.className === 'black-piece') {
+  else if (game.player2Turn && isBlack(piece)) {
 
-    return document.getElementById('loc-' + (rowNum + 1) + (colNum - 1));
+    let leftPos = document.getElementById('loc-' + (rowNum + 1) + (colNum - 1));
+
+    if(!leftPos) return leftPos;
+
+    let leftChild = leftPos.firstChild;
+
+    if(isWhite(leftChild)) {
+      
+      leftPos = document.getElementById('loc-' + (rowNum + 2) + (colNum - 2) )
+
+    }
+
+    return leftPos;
 
   }
 
@@ -179,15 +203,38 @@ function assignLeftPos(rowNum, colNum, piece) {
 
 function assignRightPos(rowNum, colNum, piece) {
 
-  if(game.player1Turn && piece.className === 'white-piece') {
+  if(game.player1Turn && isWhite(piece)) {
     
-    return document.getElementById('loc-' + (rowNum - 1) + (colNum + 1));
+    let rightPos = document.getElementById('loc-' + (rowNum - 1) + (colNum + 1));
+
+    if(!rightPos) return rightPos;
+
+    let rightChild = rightPos.firstChild;
+
+    if(isBlack(rightChild)) {
+
+      rightPos = document.getElementById('loc-' + (rowNum - 2) + (colNum + 2));
+    }
+
+    return rightPos;
 
   }
 
-  else if (game.player2Turn && piece.className === 'black-piece') {
+  else if (game.player2Turn && isBlack(piece)) {
 
-    return document.getElementById('loc-' + (rowNum + 1) + (colNum + 1));
+    let rightPos = document.getElementById('loc-' + (rowNum + 1) + (colNum + 1));
+
+    if(!rightPos) return rightPos;
+
+    let rightChild = rightPos.firstChild;
+
+    if(isWhite(rightChild)) {
+
+      rightPos = document.getElementById('loc-' + (rowNum + 2) + (colNum + 2));
+
+    }
+
+    return rightPos;
 
   }
 
@@ -264,7 +311,6 @@ function saveCurPositons(leftPos, rightPos, curPos) {
 }
 
 function playAnimation(leftPos, rightPos, curPos, piece) {
-
   
   if(leftPos && !leftPos.children[0]) {
     leftPos.style.backgroundColor = 'green';
@@ -370,5 +416,21 @@ function moveRight(piece, newPos) {
     piece.style.transition = 'none';
 
   });
+
+}
+
+function isBlack(piece) {
+
+  if(piece && piece.className === 'black-piece') return true
+
+  else return false;
+
+}
+
+function isWhite(piece) {
+
+  if(piece && piece.className === 'white-piece') return true;
+
+  else return false;
 
 }
