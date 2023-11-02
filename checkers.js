@@ -25,7 +25,11 @@ const game = {
   leftVisible: '',
   rightVisible: '',
   curPos: '',
-  i: 0
+  i: 0,
+  canJumpLeft: false,
+  dangerPositionL: '',
+  canJumpRight: false,
+  dangerPositionR: ''
 }
 
 window.onload = function() {
@@ -115,6 +119,8 @@ function createBoard() {
 
 function showMoves() {
   
+  console.log('showMoves entered');
+  
   /*This function is where all the magic happens*/
   
   /*The conditional below contains the two conditions under which the function body will not be executed*/
@@ -161,6 +167,8 @@ function showMoves() {
 }
 
 function assignLeftPos(rowNum, colNum, piece) {
+
+  console.log('assign left');
   
   if(game.player1Turn && isWhite(piece)) {
      
@@ -170,9 +178,13 @@ function assignLeftPos(rowNum, colNum, piece) {
 
     let leftChild = leftPos.firstChild;
 
+    game.dangerPositionL = leftPos;
+    
     if(isBlack(leftChild)) {
-      
-      leftPos = document.getElementById('loc-' + (rowNum - 2) + (colNum - 2) );
+
+      leftPos = document.getElementById('loc-' + (rowNum - 2) + (colNum - 2));
+
+      if(isEmptySquare(leftPos)) game.canJumpLeft = true;
 
     }
 
@@ -189,9 +201,13 @@ function assignLeftPos(rowNum, colNum, piece) {
 
     let leftChild = leftPos.firstChild;
 
+    game.dangerPositionL = leftPos;
+
     if(isWhite(leftChild)) {
-      
+
       leftPos = document.getElementById('loc-' + (rowNum + 2) + (colNum - 2) )
+
+      if(isEmptySquare(leftPos)) game.canJumpLeft = true;
 
     }
 
@@ -203,6 +219,8 @@ function assignLeftPos(rowNum, colNum, piece) {
 
 function assignRightPos(rowNum, colNum, piece) {
 
+  console.log('assign right');
+
   if(game.player1Turn && isWhite(piece)) {
     
     let rightPos = document.getElementById('loc-' + (rowNum - 1) + (colNum + 1));
@@ -211,9 +229,14 @@ function assignRightPos(rowNum, colNum, piece) {
 
     let rightChild = rightPos.firstChild;
 
+    game.dangerPositionR = rightPos;
+
     if(isBlack(rightChild)) {
 
       rightPos = document.getElementById('loc-' + (rowNum - 2) + (colNum + 2));
+
+      if(isEmptySquare(rightPos)) game.canJumpRight = true;
+
     }
 
     return rightPos;
@@ -228,9 +251,13 @@ function assignRightPos(rowNum, colNum, piece) {
 
     let rightChild = rightPos.firstChild;
 
+    game.dangerPositionR = rightPos;
+
     if(isWhite(rightChild)) {
 
       rightPos = document.getElementById('loc-' + (rowNum + 2) + (colNum + 2));
+
+      if(isEmptySquare(rightPos)) game.canJumpRight = true;
 
     }
 
@@ -275,7 +302,7 @@ function showLeftPos(leftPos, rightPos, curPos, piece) {
 
   leftPos.addEventListener('click', showLeft1 = () => {
 
-    moveLeft(piece, leftPos);
+    calcLeftMove(piece, leftPos);
 
     removeListeners(leftPos, rightPos, curPos);
     
@@ -292,7 +319,7 @@ function showRightPos(leftPos, rightPos, curPos, piece) {
   
   rightPos.addEventListener('click', showRight1 = function() {
 
-    moveRight(piece, rightPos);
+    calcRightMove(piece, rightPos);
 
     removeListeners(leftPos, rightPos, curPos);
 
@@ -312,12 +339,12 @@ function saveCurPositons(leftPos, rightPos, curPos) {
 
 function playAnimation(leftPos, rightPos, curPos, piece) {
   
-  if(leftPos && !leftPos.children[0]) {
+  if(isEmptySquare(leftPos)) {
     leftPos.style.backgroundColor = 'green';
     leftPos.style.animationIterationCount = 'infinite';
   } 
   
-  if(rightPos && !rightPos.children[0]) {
+  if(isEmptySquare(rightPos)) {
     rightPos.style.backgroundColor = 'green';
     rightPos.style.animationIterationCount = 'infinite';
   }
@@ -325,16 +352,22 @@ function playAnimation(leftPos, rightPos, curPos, piece) {
   curPos.style.backgroundColor = 'rgb(190, 6, 6)';
   game.movesVisible = true;
 
+  console.log('canJumpLeft:', game.canJumpLeft);
+  console.log('canJumpRight:', game.canJumpRight);
+
 }
 
 function stopAnimation(leftPos, rightPos, curPos) {
+
+  game.canJumpLeft = false;
+  game.canJumpRight = false;
 
   if(leftPos) {
     leftPos.style.backgroundColor = 'rgb(135, 93, 55)';
     leftPos.style.animationIterationCount = '0';
   }
   
-  if (rightPos) {
+  if(rightPos) {
     rightPos.style.backgroundColor = 'rgb(135, 93, 55)';
     rightPos.style.animationIterationCount = '0';
   }  
@@ -374,39 +407,50 @@ function changePlayerTurn() {
   }
 }
 
-function moveLeft(piece, newPos) {
+function calcLeftMove(piece, newPos) {
 
-  if(game.player1Turn) piece.style.translate = '-70px -70px';
+  if(game.canJumpLeft) jumpLeft(piece);
 
-  else piece.style.translate = '-70px 70px';
+  else moveLeft(piece);
 
-  piece.style.transition = '.4s';
-  
   piece.addEventListener('transitionend', () =>{
-
+  
     newPos.appendChild(piece);
-
+  
     piece.style.translate = '0px 0px';
-
+  
   });
+
+  
+}
+
+function jumpLeft(piece) {
+
+  if(game.player1Turn) piece.style.translate = '-140px -140px';
+
+  else piece.style.translate = '-140px 140px';
+
+  piece.style.transition = '.3s';
+
+  game.dangerPositionL.removeChild(game.dangerPositionL.firstChild);
 
 }
 
-function moveRight(piece, newPos) {
-
-  if(game.player1Turn) {
-
-    piece.style.translate = '70px -70px';
-    
-  }
+function moveLeft(piece) {
   
-  else {
-
-    piece.style.translate = '70px 70px';
-
-  }
-
+  if(game.player1Turn) piece.style.translate = '-70px -70px';
+  
+  else piece.style.translate = '-70px 70px';
+  
   piece.style.transition = '.4s';
+
+}
+
+function calcRightMove(piece, newPos) {
+
+  if(game.canJumpRight) jumpRight(piece);
+
+  else moveRight(piece);
 
   piece.addEventListener('transitionend', () =>{
 
@@ -416,7 +460,27 @@ function moveRight(piece, newPos) {
     piece.style.transition = 'none';
 
   });
+}
 
+function jumpRight(piece) {
+
+  if(game.player1Turn) piece.style.translate = '140px -140px';
+
+  else piece.style.translate = '140px 140px';
+
+  piece.style.transition = '.3s';
+
+  game.dangerPositionR.removeChild(game.dangerPositionR.firstChild);
+
+}
+
+function moveRight(piece) {
+
+  if(game.player1Turn) piece.style.translate = '70px -70px';
+  
+  else piece.style.translate = '70px 70px';
+
+  piece.style.transition = '.4s';
 }
 
 function isBlack(piece) {
@@ -433,4 +497,11 @@ function isWhite(piece) {
 
   else return false;
 
+}
+
+function isEmptySquare(position) {
+
+  if(position && !position.firstChild) return true;
+
+  else return false;
 }
