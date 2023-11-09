@@ -1,26 +1,19 @@
-let on = false;
+const topLeft = document.getElementById('top-left');
 
-const piece = document.getElementById('piece');
-const square1 = document.getElementById('top-left');
-const square2 = document.getElementById('bot-right');
+topLeft.addEventListener('click', () => {
+  changeColor(topLeft);
+} )
 
-console.log(piece);
+const topRight = document.getElementById('top-right');
 
-piece.addEventListener('click', () => {
+changeColor(topRight);
 
-  if (!on) {
-    piece.style.animationIterationCount = 'infinite';
-    square1.style.animationIterationCount = 'infinite';
-    square2.style.animationIterationCount = 'infinite';
-    on = true;
-  }
+function changeColor(position) {
 
-  else {
-    piece.style.animationIterationCount = '0';
-    square2.style.animationIterationCount = '0';
-    square1.style.animationIterationCount = '0';
+  console.log(position);
 
-    on = false;
-  } 
+  console.log('yes');
+  
+  position.style.backgroundColor = 'red';
 
-});
+}

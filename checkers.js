@@ -110,16 +110,19 @@ function createBoard() {
 
         //Cream squares do not get an event listener
         
-        brownSquare.addEventListener('click', showMoves);
+        brownSquare.addEventListener('click', () => {
+          showMoves(brownSquare)});
 
       }
     }
   }
 }
 
-function showMoves() {
+function showMoves(curPos) {
   
   console.log('showMoves entered');
+
+  console.log(curPos);
   
   /*This function is where all the magic happens*/
   
@@ -132,11 +135,11 @@ function showMoves() {
   /*The condition on the right side of the ||, '!this.children[0]' checks if the square that the player clicked on even has 
     a piece on it. If it doesn't then the function is exited*/
 
-  if(!this.children[0]) return;
+  if(isEmptySquare(curPos)) return;
 
   else if (game.movesVisible) {
 
-    if(this === game.curPos) return;
+    if(curPos === game.curPos) return;
 
     console.log('changeMove conditional entered');
 
@@ -144,25 +147,36 @@ function showMoves() {
 
   }
 
-  const piece = this.children[0];   //'piece' corresponds to the game piece that lies on the square that was clicked
+  const piece = curPos.firstChild;   //'piece' corresponds to the game piece that lies on the square that was clicked
 
-  rowNum = Number(this.id[4]);
-  colNum = Number(this.id[5]);
-
+  rowNum = Number(curPos.id[4]);
+  colNum = Number(curPos.id[5]);
+  
   let leftPos = assignLeftPos(rowNum, colNum, piece);
   let rightPos = assignRightPos(rowNum, colNum, piece);
 
-  saveCurPositons(leftPos, rightPos, this);
+  if(game.canJumpLeft) {
+    // showMoves(leftPos);
+    console.log('can jump left');
+  }
 
-  playAnimation(leftPos, rightPos, this, piece);
+  if(game.canJumpRight) {
+    // showMoves(rightPos);
+    console.log('can jump right');
+  }
 
-  cancelMove(leftPos, rightPos, this);
+  console.log(leftPos);
+  console.log(rightPos);
 
-  showLeftPos(leftPos, rightPos, this, piece);
+  saveCurPositons(leftPos, rightPos, curPos);
+
+  playAnimation(leftPos, rightPos, curPos, piece);
+
+  cancelMove(leftPos, rightPos, curPos);
+
+  showLeftPos(leftPos, rightPos, curPos, piece);
   
-  showRightPos(leftPos, rightPos, this, piece);
-
-  // this.removeEventListener('click', showMoves);
+  showRightPos(leftPos, rightPos, curPos, piece);
 
 }
 
@@ -504,4 +518,12 @@ function isEmptySquare(position) {
   if(position && !position.firstChild) return true;
 
   else return false;
+}
+
+function cannotJump() {
+
+  if(!game.canJumpLeft && !game.canJumpRight) return true;
+
+  else return false;
+
 }

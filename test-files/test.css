@@ -41,7 +41,7 @@ div div {
   cursor: pointer;
 }
 
-@keyframes example {
+/* @keyframes example {
 
   0% { 
     width: 70%;
@@ -63,5 +63,5 @@ div div {
   0%  {background-color: rgb(6, 90, 16)}
   50% {background-color: green;}
   100%  {background-color: rgb(6, 90, 16)}
-}
+} */
 
